@@ -1,6 +1,9 @@
 package org.example;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 public class HomeWork extends BinaryIntSearchTree {
@@ -23,8 +26,39 @@ public class HomeWork extends BinaryIntSearchTree {
      * Сигнатуру метода не меняем
      */
     public List<Integer> findMaxDigits(int count, int upperBound) {
-        //TODO реализовать метод
-        return null;
+        var result = new LinkedList<Integer>();
+        Integer upperBoundLocal = upperBound;
+        Integer prev = null;
+        while (count > 0) {
+            upperBoundLocal = findBound(root, upperBoundLocal, prev);
+            if (null == upperBoundLocal) {
+                break;
+            }
+            result.add(upperBoundLocal);
+            prev = upperBoundLocal;
+            --upperBoundLocal;
+            --count;
+
+        }
+        return result.stream().filter(Objects::nonNull).distinct().collect(Collectors.toList());
+    }
+
+    private Integer findBound(Node node, int upperBound, Integer prev) {
+        var val = node.value;
+        var left = node.left;
+        var right = node.right;
+
+        if (val == upperBound) {
+            return val;
+        }
+        if (val > upperBound && null != left) {
+            return findBound(left, upperBound, val);
+        }
+        if (val < upperBound && null != right) {
+            return findBound(right, upperBound, val);
+        }
+
+        return prev;
     }
 
 
